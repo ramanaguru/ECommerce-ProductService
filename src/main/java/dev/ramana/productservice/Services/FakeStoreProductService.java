@@ -2,6 +2,7 @@ package dev.ramana.productservice.Services;
 
 import dev.ramana.productservice.dtos.FakeStoreApiDTO;
 import dev.ramana.productservice.dtos.GenericProductDTO;
+import dev.ramana.productservice.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -32,30 +33,31 @@ public class FakeStoreProductService implements ProductService{
 
 
     @Override
-    public GenericProductDTO getProductById(Long id) {
-
-
+    public GenericProductDTO getProductById(Long id) throws NotFoundException {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
+        ResponseEntity<FakeStoreApiDTO>response = restTemplate.getForEntity(productUrl , FakeStoreApiDTO.class, id );
 
-        ResponseEntity<FakeStoreApiDTO>response = restTemplate.getForEntity(productUrl,FakeStoreApiDTO.class,id);
-
-        //Mapper class(It is like conversion)
         FakeStoreApiDTO fakeStoreApiDTO = response.getBody();
+
+        //How NULL error came ? because we might passing null id or id not existing STRING DEFAULT VALUE IS NULL
+        if(fakeStoreApiDTO == null){
+            throw new NotFoundException("This ProductID : " + id + " not found");
+        }
 
         GenericProductDTO genericProductDTO = new GenericProductDTO();
 
+        genericProductDTO.setId(fakeStoreApiDTO.getId());
         genericProductDTO.setCategory(fakeStoreApiDTO.getCategory());
+        genericProductDTO.setPrice(fakeStoreApiDTO.getPrice());
         genericProductDTO.setImage(fakeStoreApiDTO.getImage());
         genericProductDTO.setDescription(fakeStoreApiDTO.getDescription());
         genericProductDTO.setTitle(fakeStoreApiDTO.getTitle());
-        genericProductDTO.setPrice(fakeStoreApiDTO.getPrice());
-        genericProductDTO.setId(fakeStoreApiDTO.getId());
-
-
 
         return genericProductDTO;
+
     }
+
 
     @Override
     public GenericProductDTO  createProduct(GenericProductDTO product){

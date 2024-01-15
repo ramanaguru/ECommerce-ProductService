@@ -1,10 +1,12 @@
-package dev.ramana.productservice.Controllers;
+package dev.ramana.productservice.controllers;
 
-import dev.ramana.productservice.Services.FakeStoreProductService;
 import dev.ramana.productservice.Services.ProductService;
 import dev.ramana.productservice.dtos.GenericProductDTO;
+import dev.ramana.productservice.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public GenericProductDTO getProductById(@PathVariable("id") Long id){
+    public GenericProductDTO getProductById(@PathVariable("id") Long id) throws NotFoundException {
 
         return productService.getProductById(id);
     }
@@ -44,10 +46,31 @@ public class ProductController {
 
     }
 
+//    @DeleteMapping("{id}")
+//    public GenericProductDTO deleteProduct(@PathVariable("id") Long id){
+//        return productService.deleteProduct(id);
+//    }
+
+    //Let's see how exception handling in deleteProduct?
+    // (In case you WANT TO EXECUTE/ RUN THE APPLICATION EITHRT COMMENT OUT ONE OF deleteProduct() )
     @DeleteMapping("{id}")
-    public GenericProductDTO deleteProduct(@PathVariable("id") Long id){
-        return productService.deleteProduct(id);
+    public ResponseEntity<GenericProductDTO> deleteProduct(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(productService.deleteProduct(id), HttpStatus.OK);
+
     }
+
+
+    /*  THIS one HANDLES when there is exception in Controller  AVOID THIS ( In real time , we might be using global or general )
+        THIS CODE WILL WORK (SPECIFIC TO MORE CONTROLLER)
+
+        @ExceptionHandler(NotFoundException.class)
+       public ResponseEntity<ExceptionDto> handleNotFoundException(NotFoundException notFoundException){
+           return new ResponseEntity<>(new ExceptionDto(HttpStatus.NOT_FOUND, notFoundException.getMessage()), HttpStatus.NOT_FOUND);
+        }
+     */
+
+
+
 
 
 }
