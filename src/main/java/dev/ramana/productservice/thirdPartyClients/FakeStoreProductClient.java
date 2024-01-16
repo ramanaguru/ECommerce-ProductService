@@ -88,6 +88,10 @@ public class FakeStoreProductClient {
 
         FakeStoreApiDTO fakeStoreApiDTO = response.getBody();
 
+        if(fakeStoreApiDTO ==null){
+            throw new NotFoundException("This ProductID : + " + id + "not found");
+        }
+
         return fakeStoreApiDTO;
     }
 
