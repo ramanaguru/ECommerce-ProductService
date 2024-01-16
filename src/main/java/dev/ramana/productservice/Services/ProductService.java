@@ -12,9 +12,9 @@ public interface ProductService {
 
      public GenericProductDTO createProduct(GenericProductDTO genericProductDTO);
 
-     public List<GenericProductDTO> getAllProductsById(Long id);
+     public List<GenericProductDTO> getAllProductsById();
 
-     public GenericProductDTO deleteProduct(Long id);
+     public GenericProductDTO deleteProduct(Long id) throws NotFoundException;
 
      public GenericProductDTO updateProductById(GenericProductDTO genericProductDTO,Long id);
 }

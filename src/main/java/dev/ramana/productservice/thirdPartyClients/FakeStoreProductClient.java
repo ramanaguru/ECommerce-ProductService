@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class FakeStoreClient {
+public class FakeStoreProductClient {
 
     String productUrl ;
     String createProductUrl;
@@ -29,9 +29,9 @@ public class FakeStoreClient {
     private RestTemplateBuilder restTemplateBuilder;
 
     @Autowired
-    public  FakeStoreClient(RestTemplateBuilder restTemplateBuilder,
-                            @Value("${fakestore.api.baseurl}") String fakestorebaseUrl,
-                            @Value("${fakestore.api.product}") String productEndpoint){
+    public FakeStoreProductClient(RestTemplateBuilder restTemplateBuilder,
+                                  @Value("${fakestore.api.baseurl}") String fakestorebaseUrl,
+                                  @Value("${fakestore.api.product}") String productEndpoint){
 
                 this.restTemplateBuilder = restTemplateBuilder;
                 this.productUrl = fakestorebaseUrl + productEndpoint + "/{id}";
@@ -70,7 +70,7 @@ public class FakeStoreClient {
         return fakeStoreApiDTO;
     }
 
-    public List<FakeStoreApiDTO> getAllProductsById(Long id){
+    public List<FakeStoreApiDTO> getAllProductsById(){
         RestTemplate restTemplate = restTemplateBuilder.build();
 
         ResponseEntity<FakeStoreApiDTO[]>response = restTemplate.getForEntity(allproductsUrl,FakeStoreApiDTO[].class);
@@ -81,7 +81,7 @@ public class FakeStoreClient {
     }
 
 
-    public FakeStoreApiDTO deleteProduct(Long id){
+    public FakeStoreApiDTO deleteProduct(Long id) throws NotFoundException{
         RestTemplate restTemplate = restTemplateBuilder.build();
 
         ResponseEntity<FakeStoreApiDTO>response = restTemplate.exchange(deleteproductUrl, HttpMethod.DELETE, null,FakeStoreApiDTO.class, id);

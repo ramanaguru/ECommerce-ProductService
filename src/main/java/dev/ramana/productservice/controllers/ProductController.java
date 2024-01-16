@@ -13,19 +13,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
+
 public class ProductController {
 
 
     private ProductService productService;
 
     @Autowired
-    public ProductController(@Qualifier("fakeStoreProductService") ProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping()
-    public List<GenericProductDTO> getAllProductsById(Long id){
-        return productService.getAllProductsById(id);
+    public List<GenericProductDTO> getAllProductsById(){
+        return productService.getAllProductsById();
     }
 
     @GetMapping("{id}")
@@ -52,9 +53,9 @@ public class ProductController {
 //    }
 
     //Let's see how exception handling in deleteProduct?
-    // (In case you WANT TO EXECUTE/ RUN THE APPLICATION EITHRT COMMENT OUT ONE OF deleteProduct() )
+    // (In case you WANT TO EXECUTE/ RUN THE APPLICATION EITRHER COMMENT OUT ONE OF deleteProduct() )
     @DeleteMapping("{id}")
-    public ResponseEntity<GenericProductDTO> deleteProduct(@PathVariable("id") Long id) {
+    public ResponseEntity<GenericProductDTO> deleteProduct(@PathVariable("id") Long id) throws NotFoundException {
         return new ResponseEntity<>(productService.deleteProduct(id), HttpStatus.OK);
 
     }

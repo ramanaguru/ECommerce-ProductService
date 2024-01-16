@@ -25,7 +25,7 @@ public class SelfProductServiceImp implements  ProductService{
     }
 
     @Override
-    public List<GenericProductDTO> getAllProductsById(Long id) {
+    public List<GenericProductDTO> getAllProductsById() {
         return null;
     }
 

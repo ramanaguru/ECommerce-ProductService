@@ -3,26 +3,21 @@ package dev.ramana.productservice.Services;
 import dev.ramana.productservice.Mappers.DtoMappers;
 import dev.ramana.productservice.dtos.GenericProductDTO;
 import dev.ramana.productservice.exceptions.NotFoundException;
-import dev.ramana.productservice.thirdPartyClients.FakeStoreClient;
-import dev.ramana.productservice.thirdPartyClients.dtos.FakeStoreApiDTO;
+import dev.ramana.productservice.thirdPartyClients.FakeStoreProductClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
-
+@Primary
 @Service("fakeStoreProductService")
 public class FakeStoreProductService implements ProductService{
-   FakeStoreClient fakeStoreClient;
+   FakeStoreProductClient fakeStoreProductClient;
 
 
     @Autowired
-    public FakeStoreProductService(FakeStoreClient fakeStoreClient) {
-        this.fakeStoreClient = fakeStoreClient;
+    public FakeStoreProductService(FakeStoreProductClient fakeStoreProductClient) {
+        this.fakeStoreProductClient = fakeStoreProductClient;
     }
 
 
@@ -30,7 +25,7 @@ public class FakeStoreProductService implements ProductService{
     public GenericProductDTO getProductById(Long id) throws NotFoundException {
 
 
-        return DtoMappers.fakeStoreToGenericProductDtoMapper(fakeStoreClient.getProductById(id));
+        return DtoMappers.fakeStoreToGenericProductDtoMapper(fakeStoreProductClient.getProductById(id));
 
     }
 
@@ -38,45 +33,24 @@ public class FakeStoreProductService implements ProductService{
     @Override
     public GenericProductDTO  createProduct(GenericProductDTO product){
 
-        return DtoMappers.fakeStoreToGenericProductDtoMapper(fakeStoreClient.createProduct(DtoMappers.genericProductDtoToFakeStoreProductDtoMapper(product)));
+        return DtoMappers.fakeStoreToGenericProductDtoMapper(fakeStoreProductClient.createProduct(DtoMappers.genericProductDtoToFakeStoreProductDtoMapper(product)));
     }
 
 
-    public List<GenericProductDTO> getAllProductsById(Long id){
+    public List<GenericProductDTO> getAllProductsById(){
 
-        RestTemplate restTemplate = restTemplateBuilder.build();
-
-        ResponseEntity<FakeStoreApiDTO[]>response = restTemplate.getForEntity(allproductsUrl,FakeStoreApiDTO[].class);
-
-        FakeStoreApiDTO[] fakeStoreApiDTOs = response.getBody();
-
-        List<GenericProductDTO>genericProductDTOS = new ArrayList<>();
-
-        for(FakeStoreApiDTO fakeStoreApiDTO : fakeStoreApiDTOs){
-            GenericProductDTO genericProductDTO =  new GenericProductDTO();
-
-            genericProductDTO.setCategory(fakeStoreApiDTO.getCategory());
-            genericProductDTO.setImage(fakeStoreApiDTO.getImage());
-            genericProductDTO.setDescription(fakeStoreApiDTO.getDescription());
-            genericProductDTO.setTitle(fakeStoreApiDTO.getTitle());
-            genericProductDTO.setPrice(fakeStoreApiDTO.getPrice());
-            genericProductDTO.setId(fakeStoreApiDTO.getId());
-
-            genericProductDTOS.add(genericProductDTO);
-        }
-
-        return genericProductDTOS;
+        return fakeStoreProductClient.getAllProductsById().stream().map(DtoMappers::fakeStoreToGenericProductDtoMapper).toList();
     }
 
 
-    public GenericProductDTO deleteProduct(Long id){
+    public GenericProductDTO deleteProduct(Long id) throws NotFoundException{
 
-        return DtoMappers.fakeStoreToGenericProductDtoMapper(fakeStoreClient.deleteProduct(id));
+        return DtoMappers.fakeStoreToGenericProductDtoMapper(fakeStoreProductClient.deleteProduct(id));
     }
 
     public GenericProductDTO updateProductById(GenericProductDTO productDTO, Long id){
 
-        return DtoMappers.fakeStoreToGenericProductDtoMapper(fakeStoreClient.updateProductById(DtoMappers.genericProductDtoToFakeStoreProductDtoMapper(productDTO), id));
+        return DtoMappers.fakeStoreToGenericProductDtoMapper(fakeStoreProductClient.updateProductById(DtoMappers.genericProductDtoToFakeStoreProductDtoMapper(productDTO), id));
     }
 
 
